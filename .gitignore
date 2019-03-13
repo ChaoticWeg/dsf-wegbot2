@@ -1,3 +1,9 @@
+# TypeScript output
+lib/*
+
+# IDE-specific stuff
+**/.vscode
+
 # Logs
 logs
 *.log
