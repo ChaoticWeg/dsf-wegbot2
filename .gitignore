@@ -1,5 +1,8 @@
-# TypeScript output
+# TypeScript
 lib/*
+
+# Jest
+coverage/*
 
 # IDE-specific stuff
 **/.vscode
