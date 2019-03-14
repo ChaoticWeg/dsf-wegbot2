@@ -3,8 +3,9 @@
   "name": "dsf-wegbot2",
   "version": "2.0.0",
   "description": "Modbot for Dallas Sports Fam discord",
-  "license": "GPL-3.0-or-later",
+  "license": "GPL-3.0",
   "author": "Shawn Lutch (ChaoticWeg) <shawn@chaoticweg.cc> (https://chaoticweg.cc)",
+  "private": true,
   "scripts": {
     "type-check": "tsc --noEmit",
     "type-check:watch": "yarn run type-check -- --watch",
@@ -31,11 +32,9 @@
     "ts-jest": "^24.0.0",
     "typescript": "^3.3.3333"
   },
-
   "main": "./app.js",
   "jest": {
     "preset": "ts-jest",
     "testEnvironment": "node"
   }
-
 }
