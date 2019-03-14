@@ -15,7 +15,7 @@
 
     "test": "jest --setupFiles dotenv/config",
     "test:coverage": "jest --coverage --setupFiles dotenv/config",
-    "coveralls": "yarn run test:coverage && cat ./coverage/lcov.info | coveralls"
+    "test:ci": "yarn run test:coverage && cat ./coverage/lcov.info | coveralls"
   },
   "dependencies": {
     "@types/dotenv": "^6.1.0",

@@ -10,8 +10,7 @@ before_script:
   - yarn build
 
 script:
-  - yarn test
-  - yarn run coveralls
+  - yarn test:ci
 
 after_success:
   - wget https://raw.githubusercontent.com/DiscordHooks/travis-ci-discord-webhook/master/send.sh
