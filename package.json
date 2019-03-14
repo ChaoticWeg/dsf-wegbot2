@@ -3,20 +3,24 @@
   "version": "2.0.0",
   "description": "Modbot for Dallas Sports Fam discord",
   "license": "GPL-3.0",
-  "author": "Shawn Lutch (ChaoticWeg) <shawn@chaoticweg.cc> (https://chaoticweg.cc)",
+  "author": "Shawn Lutch <shawn@chaoticweg.cc> (https://chaoticweg.cc)",
   "private": true,
   "scripts": {
     "type-check": "tsc --noEmit",
     "type-check:watch": "yarn run type-check -- --watch",
+
     "build": "yarn run build:types && yarn run build:js",
     "build:types": "tsc --emitDeclarationOnly",
     "build:js": "babel src --out-dir lib --extensions \".ts\" --source-maps inline",
-    "test": "jest",
-    "test:coverage": "jest --coverage",
-    "coveralls": "jest --coverage && cat ./coverage/lcov.info | coveralls"
+
+    "test": "jest --setupFiles dotenv/config",
+    "test:coverage": "jest --coverage --setupFiles dotenv/config",
+    "coveralls": "yarn run test:coverage && cat ./coverage/lcov.info | coveralls"
   },
   "dependencies": {
-    "discord.js": "^11.4.2"
+    "@types/dotenv": "^6.1.0",
+    "discord.js": "^11.4.2",
+    "dotenv": "^7.0.0"
   },
   "devDependencies": {
     "@babel/cli": "^7.2.3",

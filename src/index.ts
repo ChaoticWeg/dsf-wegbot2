@@ -7,7 +7,7 @@ class Wegbot {
 
     constructor() {
         this._instance = new Discord.Client();
-        this._credentials = new Credentials('../creds.json');
+        this._credentials = new Credentials();
     }
 
     public get instance() : Discord.Client {
@@ -16,12 +16,12 @@ class Wegbot {
 
     public get token() : string | undefined {
         /* istanbul ignore next */
-        return this._credentials.getString('discordToken') || undefined;
+        return this._credentials.getString('DISCORD_TOKEN') || undefined;
     }
 
     public get testChannelId() : number | undefined {
         /* istanbul ignore next */
-        return this._credentials.getNumber('discordTestChannelId') || undefined;
+        return this._credentials.getNumber('DISCORD_TEST_CHANNEL_ID') || undefined;
     }
 
     public start() : Promise<string> {

@@ -1,10 +1,8 @@
 import Wegbot from '../src/index';
 
-let fileCreds : any;
-
-beforeEach(() => {
-    fileCreds = require('../creds.json');
-});
+// reset process.env after each test
+const previousEnv = Object.assign({}, process.env);
+afterEach(() => { process.env = previousEnv; });
 
 test('creates the instance', () => {
     expect(Wegbot.instance).not.toBeNull();
@@ -14,12 +12,12 @@ test('creates the instance', () => {
 
 test('properly reads and type-checks the token', () => {
     expect(Wegbot.token).not.toBeUndefined();
-    expect(Wegbot.token).toStrictEqual(fileCreds.discordToken);
+    expect(Wegbot.token).toStrictEqual(String(process.env.DISCORD_TOKEN));
 });
 
 test('properly reads and type-checks the test channel id', () => {
     expect(Wegbot.testChannelId).not.toBeUndefined();
-    expect(Wegbot.testChannelId).toStrictEqual(fileCreds.discordTestChannelId);
+    expect(Wegbot.testChannelId).toStrictEqual(Number(process.env.DISCORD_TEST_CHANNEL_ID));
 });
 
 test('logs in and out successfully', async () => {
