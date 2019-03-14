@@ -6,7 +6,11 @@ class Wegbot {
 
     constructor() {
         this._instance = new Discord.Client();
-        this._token = require('../creds.json').token;
+        this._token = this.readToken();
+    }
+
+    private readToken() : string {
+        return process.env['DISCORD_TOKEN'] || require('../creds.json').discordToken;
     }
 
     public get instance() : Discord.Client {
