@@ -40,6 +40,10 @@
   "main": "./app.js",
   "jest": {
     "preset": "ts-jest",
-    "testEnvironment": "node"
+    "testEnvironment": "node",
+    "coveragePathIgnorePatterns": [
+      "/node_modules/",
+      "src/events/"
+    ]
   }
 }
