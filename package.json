@@ -1,5 +1,4 @@
 {
-
   "name": "dsf-wegbot2",
   "version": "2.0.0",
   "description": "Modbot for Dallas Sports Fam discord",
@@ -13,7 +12,8 @@
     "build:types": "tsc --emitDeclarationOnly",
     "build:js": "babel src --out-dir lib --extensions \".ts\" --source-maps inline",
     "test": "jest",
-    "test:coverage": "jest --coverage"
+    "test:coverage": "jest --coverage",
+    "coveralls": "jest --coverage && cat ./coverage/lcov.info | coveralls"
   },
   "dependencies": {
     "discord.js": "^11.4.2"
@@ -28,6 +28,7 @@
     "@types/jest": "^24.0.11",
     "@types/node": "^11.11.3",
     "babel-jest": "^24.5.0",
+    "coveralls": "^3.0.3",
     "jest": "^24.5.0",
     "ts-jest": "^24.0.0",
     "typescript": "^3.3.3333"
