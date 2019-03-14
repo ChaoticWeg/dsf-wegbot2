@@ -1,5 +1,6 @@
 import Discord from "discord.js";
 import { Credentials } from "./creds";
+import { EventRegistry } from "./events";
 
 class Wegbot {
     private _instance : Discord.Client;
@@ -8,6 +9,8 @@ class Wegbot {
     constructor() {
         this._instance = new Discord.Client();
         this._credentials = new Credentials();
+
+        EventRegistry.instance.applyAll(this._instance);
     }
 
     public get instance() : Discord.Client {
