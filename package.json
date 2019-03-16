@@ -8,14 +8,13 @@
   "scripts": {
     "type-check": "tsc --noEmit",
     "type-check:watch": "yarn run type-check -- --watch",
-
     "build": "yarn run build:types && yarn run build:js",
     "build:types": "tsc --emitDeclarationOnly",
     "build:js": "babel src --out-dir lib --extensions \".ts\" --source-maps inline",
-
     "test": "jest --setupFiles dotenv/config",
     "test:coverage": "jest --coverage --setupFiles dotenv/config",
-    "test:ci": "yarn run test:coverage && cat ./coverage/lcov.info | coveralls"
+    "test:ci": "yarn run test:coverage && cat ./coverage/lcov.info | coveralls",
+    "start": "yarn build && node lib/index.js"
   },
   "dependencies": {
     "@types/dotenv": "^6.1.0",
@@ -32,12 +31,15 @@
     "@types/jest": "^24.0.11",
     "@types/node": "^11.11.3",
     "babel-jest": "^24.5.0",
+    "babel-preset-env": "^1.7.0",
+    "babel-register": "^6.26.0",
     "coveralls": "^3.0.3",
     "jest": "^24.5.0",
     "ts-jest": "^24.0.0",
     "typescript": "^3.3.3333"
   },
-  "main": "./app.js",
+  "main": "lib/index.js",
+  "types": "lib/index.d.ts",
   "jest": {
     "preset": "ts-jest",
     "testEnvironment": "node",
