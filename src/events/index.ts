@@ -1,17 +1,16 @@
 import { WegbotEvent } from "./baseEvent";
 import { ReadyEvent } from "./ready";
 import { EchoMessageEvent } from "./message";
+import { EventRegistry } from "./registry";
 
-export default (() => {
-    
-    // instantiate each type of event - they will register themselves
-    const events: Array<WegbotEvent> = [
-        new ReadyEvent(),
-        new EchoMessageEvent()
-    ];
+const Events: Array<WegbotEvent> = [
+    new ReadyEvent(),
+    new EchoMessageEvent()
+];
 
-    return events;
+export { Events };
+export { EventRegistry };
 
-})();
-
-export { EventRegistry } from "./registry";
+export function registerEvents(registry: EventRegistry): void {
+    Events.forEach(e => { registry.register(e.eventName, e.onTriggered); });
+}

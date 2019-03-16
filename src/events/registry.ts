@@ -22,15 +22,4 @@ export class EventRegistry {
         let result : Array<Function> | undefined = this._registry.get(name);
         return util.isUndefined(result) ? new Array<Function>() : result;
     }
-
-    // disallow constructor
-    private constructor() {}
-
-    private static _instance : EventRegistry | null = null;
-    public static get instance() {
-        if (util.isNull(EventRegistry._instance)) {
-            EventRegistry._instance = new EventRegistry();
-        }
-        return EventRegistry._instance;
-    }
 }
