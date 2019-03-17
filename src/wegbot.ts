@@ -1,17 +1,13 @@
 import Discord from "discord.js";
 import { Credentials } from "./creds";
-import { registerEvents, EventRegistry } from "./events";
+import { EventRegistry } from "./events";
+import { CommandRegistry } from "./commands";
 
 export class Wegbot {
-    private _discord : Discord.Client;
-    private _credentials : Credentials;
-    private _events : EventRegistry;
-
-    public constructor() {
-        this._discord = new Discord.Client();
-        this._credentials = new Credentials();
-        this._events = new EventRegistry();
-    }
+    private _discord: Discord.Client = new Discord.Client();
+    private _credentials: Credentials = new Credentials();
+    private _events: EventRegistry = new EventRegistry();
+    private _commands: CommandRegistry = new CommandRegistry();
 
     public get discord() : Discord.Client {
         return this._discord;
@@ -35,8 +31,11 @@ export class Wegbot {
         return this._discord.destroy();
     }
 
-    public registerEvents() : void {
-        registerEvents(this._events);
+    public init(): void {
+        this._events.init();
         this._events.applyAll(this._discord);
+        
+        this._commands.init();
+        this._commands.bind(this._discord);
     }
 };

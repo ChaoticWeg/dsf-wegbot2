@@ -1,25 +1,28 @@
 import Discord from "discord.js";
-import * as util from "util";
+
+import { WegbotEvent } from "./baseEvent";
+import { ReadyEvent } from "./ready";
+import { EchoMessageEvent } from "./message";
+
+const KnownEvents: Array<WegbotEvent> = [
+    new ReadyEvent(),
+    new EchoMessageEvent()
+];
 
 export class EventRegistry {
-    private _registry : Map<string, Array<Function>> = new Map<string, Array<Function>>();
+    private _registry : Array<WegbotEvent> = new Array<WegbotEvent>();
 
     public applyAll(client: Discord.Client) : void {
-        this._registry.forEach((fns: Array<Function>, eventName: string) => {
-            fns.forEach((fn: Function) => {
-                client.on(eventName, fn);
-            });
+        this._registry.forEach((e: WegbotEvent) => {
+            client.on(e.eventName, e.onTriggered.bind(e));
         });
     }
 
-    public register(name: string, fn: Function) {
-        let existing : Array<Function> = this.forName(name);
-        existing.push(fn);
-        this._registry.set(name, existing);
+    public init(): void {
+        KnownEvents.forEach(this.register.bind(this));
     }
-
-    public forName(name: string) : Array<Function> {
-        let result : Array<Function> | undefined = this._registry.get(name);
-        return util.isUndefined(result) ? new Array<Function>() : result;
+    
+    public register(event: WegbotEvent): void {
+        this._registry.push(event);
     }
 }

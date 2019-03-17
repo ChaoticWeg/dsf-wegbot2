@@ -5,5 +5,5 @@ import { Wegbot } from "./wegbot";
 
 const bot = new Wegbot();
 
-bot.registerEvents();
+bot.init();
 bot.start();
