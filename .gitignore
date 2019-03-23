@@ -1,8 +1,9 @@
-# TypeScript, Jest, and runtime creds
+# TypeScript, Jest, IDE, and runtime creds
 lib/*
 coverage/*
-**/.vscode
 **/creds.json
+**/.vscode/
+**/.idea/
 
 # Logs
 logs
