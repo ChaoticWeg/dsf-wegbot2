@@ -1,7 +1,6 @@
-import { WegbotCommand } from "./baseCommand";
+import { WegbotCommand, CommandResult } from "./baseCommand";
 import Discord, { Message } from "discord.js";
 import { PingCommand } from "./ping";
-import * as util from "util";
 
 const KnownCommands: Array<WegbotCommand> = [
     new PingCommand()
@@ -23,18 +22,13 @@ export class CommandRegistry {
         this._internal.push(cmd);
     }
 
-    private onCommandExecuted(ctx: Message | Array<Message>): void {
-        let arr: Array<Message> = util.isArray(ctx) ? ctx : [ ctx ];
-        arr.forEach((m: Message) => {
-            console.log(`CMD SUCCESS: ${m}`);
-        });
+    private static onCommandSuccess(result: CommandResult): void {
+        console.log(`SUCCESS: ${result.context.author.username}#${result.context.author.discriminator} issued command: ${result.context.content}`);
     }
 
-    private onCommandFailed(ctx: Message | Array<Message>): void {
-        let arr: Array<Message> = util.isArray(ctx) ? ctx : [ ctx ];
-        arr.forEach((m: Message) => {
-            console.error(`CMD FAILURE: ${m}`);
-        });
+    private static onCommandFailure(result: CommandResult): void {
+        console.log(`FAILURE: ${result.context.author.username}#${result.context.author.discriminator} issued command: ${result.context.content}`);
+        console.log(result.error);
     }
 
     public handleMessage(msg: Message): void {
@@ -54,8 +48,8 @@ export class CommandRegistry {
         this._internal.forEach(c => {
             if (cmdStr === c.cmdStr.toUpperCase()) {
                 c.onTriggered(msg)
-                    .then(self.onCommandExecuted.bind(self))
-                    .catch(self.onCommandFailed.bind(self));
+                    .then(CommandRegistry.onCommandSuccess.bind(self))
+                    .catch(CommandRegistry.onCommandFailure.bind(self));
             }
         });
     }
