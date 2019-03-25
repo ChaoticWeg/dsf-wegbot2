@@ -8,6 +8,16 @@ import { WegbotOptions } from "./WegbotOptions";
 
 export class Wegbot {
 
+    public get config(): WegbotConfig {
+        /* instanbul ignore next */
+        return this._config;
+    }
+
+    public set config(newConfig: WegbotConfig) {
+        this._config = newConfig;
+        this.saveConfig();
+    }
+
     public get token(): string | undefined {
         /* istanbul ignore next */
         return this._credentials.getString("DISCORD_TOKEN") || undefined;
@@ -55,27 +65,20 @@ export class Wegbot {
     }
 
     private onCommandSuccess(result: WegbotCommandResult): void {
-        if (!this.dev) {
-            console.log(`SUCCESS: ${result.command.asFirstWord}`);
-        }
+        this.logLine(`SUCCESS: ${result.command.asContentStart}`);
     }
 
     private onCommandFailure(result: WegbotCommandResult): void {
-        if (!this.dev) {
-            console.error(`FAILURE: ${result.command.asFirstWord} - ${result.reason}`);
-            if (result.error) {
-                console.error(result.error);
-            }
-        }
+        this.logError(`FAILURE: ${result.command.asContentStart} - ${result.reason}`, result.error);
     }
 
     private checkMessageForCommand(message: Message): void {
-        if (!message.content.startsWith(WegbotCommand.prefix)) {
+        if (!message.cleanContent.startsWith(WegbotCommand.prefix)) {
             return;
         }
         this._commands.forEach((c: WegbotCommand) => {
-            if (message.content.split(" ")[0].toUpperCase() === c.asFirstWord.toUpperCase()) {
-                c.trigger(message).then(this.onCommandSuccess).catch(this.onCommandFailure);
+            if (message.cleanContent.toUpperCase() === c.asContentStart.toUpperCase()) {
+                c.trigger(message, this).then(this.onCommandSuccess).catch(this.onCommandFailure);
             }
         });
     }
@@ -115,6 +118,16 @@ export class Wegbot {
                     return this.onConfigNotFound();
                 }
                 throw e;
+            });
+    }
+
+    private saveConfig(): void {
+        ConfigManager.save(this.config)
+            .then(() => {
+                this.logLine("saved config");
+            })
+            .catch((e) => {
+                this.logError("unable to save config!", e);
             });
     }
 }

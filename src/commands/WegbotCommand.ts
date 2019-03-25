@@ -1,4 +1,5 @@
 import { Message } from "discord.js";
+import { Wegbot } from "../wegbot";
 import { WegbotCommandResult } from "./WegbotCommandResult";
 
 export interface WegbotCommandProps {
@@ -8,7 +9,7 @@ export interface WegbotCommandProps {
 
 export abstract class WegbotCommand {
 
-    public get asFirstWord(): string {
+    public get asContentStart(): string {
         return "".concat(WegbotCommand.prefix, this.commandStr);
     }
 
@@ -22,13 +23,14 @@ export abstract class WegbotCommand {
         this.props = props;
     }
 
-    public async trigger(context: Message): Promise<WegbotCommandResult> {
+    public async trigger(context: Message, bot?: Wegbot): Promise<WegbotCommandResult> {
         return new Promise<WegbotCommandResult>(
             async (resolve: (r: WegbotCommandResult) => void, reject: (r: WegbotCommandResult) => void) => {
-                const result: WegbotCommandResult = await this.execute(context).catch((r: WegbotCommandResult) => r);
+                const result: WegbotCommandResult = await this.execute(context, bot)
+                    .catch((r: WegbotCommandResult) => r);
                 return result.success ? resolve(result) : reject(result);
             });
     }
 
-    protected abstract async execute(context: Message): Promise<WegbotCommandResult>;
+    protected abstract async execute(context: Message, bot?: Wegbot): Promise<WegbotCommandResult>;
 }
