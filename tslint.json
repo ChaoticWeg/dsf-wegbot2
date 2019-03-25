@@ -1,0 +1,16 @@
+{
+    "extends": [
+        "tslint:recommended"
+    ],
+    "linterOptions": {
+        "exclude": [
+            "lib"
+        ]
+    },
+    "rules": {
+        "interface-name": false,
+        "no-console": false,
+        "variable-name": [ true, "allow-leading-underscore" ],
+        "trailing-comma": [ true, { "multiline": "never", "singleline": "never" } ]
+    }
+}
