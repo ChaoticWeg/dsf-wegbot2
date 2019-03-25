@@ -2,7 +2,7 @@ import Discord, { Message } from "discord.js";
 import { WegbotCommand, WegbotCommandResult } from "../commands";
 import { ConfigManager } from "../config";
 import { WegbotEventHandler } from "../events";
-import { WegbotConfig } from "../models";
+import { RequestableRole, WegbotConfig } from "../models";
 import { Credentials } from "./Credentials";
 import { WegbotOptions } from "./WegbotOptions";
 
@@ -11,11 +11,6 @@ export class Wegbot {
     public get config(): WegbotConfig {
         /* instanbul ignore next */
         return this._config;
-    }
-
-    public set config(newConfig: WegbotConfig) {
-        this._config = newConfig;
-        this.saveConfig();
     }
 
     public get token(): string | undefined {
@@ -62,6 +57,16 @@ export class Wegbot {
 
     public registerCommand(command: WegbotCommand): void {
         this._commands.push(command);
+    }
+
+    public addRole(role: RequestableRole): void {
+        this._config.roles.push(role);
+    }
+
+    public saveConfig(): Promise<void> {
+        return new Promise<void>((resolve: () => void, reject: (e: NodeJS.ErrnoException) => void) => {
+            ConfigManager.save(this._config).then(resolve).catch(reject);
+        });
     }
 
     private onCommandSuccess(result: WegbotCommandResult): void {
@@ -118,16 +123,6 @@ export class Wegbot {
                     return this.onConfigNotFound();
                 }
                 throw e;
-            });
-    }
-
-    private saveConfig(): void {
-        ConfigManager.save(this.config)
-            .then(() => {
-                this.logLine("saved config");
-            })
-            .catch((e) => {
-                this.logError("unable to save config!", e);
             });
     }
 }
