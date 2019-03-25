@@ -9,6 +9,8 @@ export interface WegbotCommandProps {
 
 export abstract class WegbotCommand {
 
+    public static readonly errorReaction: string = "👎";
+
     public get asContentStart(): string {
         return "".concat(WegbotCommand.prefix, this.commandStr);
     }
@@ -27,7 +29,11 @@ export abstract class WegbotCommand {
         return new Promise<WegbotCommandResult>(
             async (resolve: (r: WegbotCommandResult) => void, reject: (r: WegbotCommandResult) => void) => {
                 const result: WegbotCommandResult = await this.execute(context, bot)
-                    .catch((r: WegbotCommandResult) => r);
+                    .catch((r: WegbotCommandResult) => {
+                        context.react(WegbotCommand.errorReaction).catch(console.error);
+                        context.reply(r.reason).catch(console.error);
+                        return r;
+                    });
                 return result.success ? resolve(result) : reject(result);
             });
     }
