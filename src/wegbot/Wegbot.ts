@@ -89,6 +89,13 @@ export class Wegbot {
         }
     }
 
+    private addUserIfNotExist(m: Message): void {
+        if (!this._config.users.map((u: CommandUser) => u.id).includes(m.author.id)) {
+            this.logLine(`registering new user ${m.author.username}#${m.author.discriminator}`);
+            this._config.users.push({ id: m.author.id } as CommandUser);
+        }
+    }
+
     private onCommandSuccess(result: WegbotCommandResult): void {
         this.logLine(`SUCCESS: ${result.command.asContentStart}`);
     }
@@ -98,6 +105,8 @@ export class Wegbot {
     }
 
     private checkMessageForCommand(message: Message): void {
+        this.addUserIfNotExist(message);
+
         if (!message.cleanContent.startsWith(WegbotCommand.prefix)) {
             return;
         }
