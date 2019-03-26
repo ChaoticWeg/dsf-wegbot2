@@ -1,8 +1,8 @@
 import { Snowflake } from "discord.js";
 
 export interface CommandUser {
-    // default values
     userId: Snowflake;
-    isOwner: boolean;
-    isAdmin: boolean;
+    // default values should always be false/falsy
+    isOwner?: boolean;
+    isAdmin?: boolean;
 }

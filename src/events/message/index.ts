@@ -18,7 +18,7 @@ export class MessageEventHandler extends WegbotEventHandler<Message> {
     }
 
     public onTriggered(context: Message): Promise<Message> {
-        return new Promise<Message>((resolve: (m: Message) => void) => {
+        return new Promise<Message>((resolve: (m: Message) => void, reject: (e: Error) => void) => {
             switch (context.channel.type) {
                 case "dm":
                 case "group":
@@ -28,6 +28,8 @@ export class MessageEventHandler extends WegbotEventHandler<Message> {
                     console.log(MessageEventHandler.publicMsg(context));
                     return resolve(context);
             }
+
+            return reject(new Error("unknown message type"));
         });
     }
 }
