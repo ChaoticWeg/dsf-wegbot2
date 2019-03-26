@@ -10,10 +10,16 @@ dotenv_config();
 const bot = new Wegbot();
 
 // register all events
-events.forEach((e: WegbotEventHandler<any>) => bot.registerEventHandler(e));
+events.forEach((e: WegbotEventHandler<any>) => {
+    bot.registerEventHandler(e);
+});
 
 // register all commands
 commands.forEach((e: WegbotCommand) => bot.registerCommand(e));
 
 // start bot
-bot.start().then(() => { console.log("logged in"); }).catch(console.error);
+bot.start()
+    .then(() => {
+        console.log("logged in");
+    })
+    .catch(console.error);
