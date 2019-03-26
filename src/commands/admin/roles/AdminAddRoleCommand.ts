@@ -1,5 +1,5 @@
 import { Message, Role } from "discord.js";
-import { RequestableRole, WegbotConfig } from "../../../models";
+import { RequestableRole } from "../../../models";
 import { Wegbot } from "../../../wegbot";
 import { WegbotCommand } from "../../WegbotCommand";
 import { WegbotCommandResult } from "../../WegbotCommandResult";
@@ -16,8 +16,7 @@ export class AdminAddRoleCommand extends AdminRoleCommand {
                 const command: WegbotCommand = this;
                 const trigger: Message = context;
 
-                // build new config from existing; get known roles for this guild
-                const config: WegbotConfig = Object.assign({} as WegbotConfig, bot.config);
+                const knownRoles = bot.roles;
 
                 // verify args are given
                 const args: string[] = context.cleanContent.replace(this.commandStr, "").trimLeft().split(" ");
@@ -59,7 +58,7 @@ export class AdminAddRoleCommand extends AdminRoleCommand {
                 // we have our role to add. check that it's not already known
                 const roleToAdd: Role = foundRoles[0];
                 const alreadyKnown: RequestableRole[] =
-                    config.roles.filter((r: RequestableRole) => r.id === roleToAdd.id);
+                    knownRoles.filter((r: RequestableRole) => r.id === roleToAdd.id);
 
                 // verify this role isn't already known
                 if (alreadyKnown.length > 0) {

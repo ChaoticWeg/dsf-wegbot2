@@ -2,15 +2,18 @@ import Discord, { Message } from "discord.js";
 import { WegbotCommand, WegbotCommandResult } from "../commands";
 import { ConfigManager } from "../config";
 import { WegbotEventHandler } from "../events";
-import { RequestableRole, WegbotConfig } from "../models";
+import { CommandUser, RequestableRole, WegbotConfig } from "../models";
 import { Credentials } from "./Credentials";
 import { WegbotOptions } from "./WegbotOptions";
 
 export class Wegbot {
 
-    public get config(): WegbotConfig {
-        /* instanbul ignore next */
-        return this._config;
+    public get users(): CommandUser[] {
+        return this._config.users;
+    }
+
+    public get roles(): RequestableRole[] {
+        return this._config.roles;
     }
 
     public get token(): string | undefined {
@@ -24,7 +27,7 @@ export class Wegbot {
     }
 
     private static defaultConfig(): WegbotConfig {
-        return { guilds: [], users: [], roles: [] };
+        return { users: [], roles: [] };
     }
 
     public readonly dev: boolean;
@@ -51,8 +54,10 @@ export class Wegbot {
         return this.discord.destroy();
     }
 
-    public registerEventHandler(handler: WegbotEventHandler<any>): void {
-        this.discord.on(handler.eventName, handler.onTriggered);
+    public registerEventHandler<T>(handler: WegbotEventHandler<T>): void {
+        this.discord.on(handler.eventName, (t: T) => {
+            handler.onTriggered(t).catch((e) => { this.logError(e); });
+        });
     }
 
     public registerCommand(command: WegbotCommand): void {
@@ -69,6 +74,21 @@ export class Wegbot {
         });
     }
 
+    public logLine(msg: any): void {
+        if (!this.dev) {
+            console.log(msg);
+        }
+    }
+
+    public logError(msg: any, e?: Error): void {
+        if (!this.dev) {
+            console.error(msg);
+            if (e) {
+                console.error(e);
+            }
+        }
+    }
+
     private onCommandSuccess(result: WegbotCommandResult): void {
         this.logLine(`SUCCESS: ${result.command.asContentStart}`);
     }
@@ -82,25 +102,10 @@ export class Wegbot {
             return;
         }
         this._commands.forEach((c: WegbotCommand) => {
-            if (message.cleanContent.toUpperCase() === c.asContentStart.toUpperCase()) {
+            if (message.cleanContent.toUpperCase().startsWith(c.asContentStart.toUpperCase())) {
                 c.trigger(message, this).then(this.onCommandSuccess).catch(this.onCommandFailure);
             }
         });
-    }
-
-    private logLine(msg: any): void {
-        if (!this.dev) {
-            console.log(msg);
-        }
-    }
-
-    private logError(msg: any, e?: Error): void {
-        if (!this.dev) {
-            console.error(msg);
-            if (e) {
-                console.error(e);
-            }
-        }
     }
 
     private onConfigNotFound(): void {
@@ -116,7 +121,7 @@ export class Wegbot {
         ConfigManager.load()
             .then((c: WegbotConfig) => {
                 this._config = c;
-                this.logLine(`loaded config: ${this._config.guilds.length} guilds, ${this._config.users.length} users`);
+                this.logLine(`loaded config: ${this._config.users.length} users, ${this._config.roles.length} roles`);
             })
             .catch((e: NodeJS.ErrnoException) => {
                 if (e.code === "ENOENT") {
