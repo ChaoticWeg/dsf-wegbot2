@@ -1,11 +1,13 @@
-import { ClapCommand } from "./clap";
-import { PingCommand } from "./ping";
+import { CommandResult } from "./CommandResult";
 import { WegbotCommand } from "./WegbotCommand";
-import { WegbotCommandResult } from "./WegbotCommandResult";
 
-export const commands: WegbotCommand[] = [
-    new PingCommand(),
-    new ClapCommand()
-];
+export type CommandMap = Map<string, WegbotCommand>;
 
-export { WegbotCommand, WegbotCommandResult };
+export { CommandResult, WegbotCommand };
+
+export default {
+    emptyMap: () => new Map<string, WegbotCommand>(),
+    prefix: "?"
+};
+
+export { PingCommand } from "./impl/PingCommand";

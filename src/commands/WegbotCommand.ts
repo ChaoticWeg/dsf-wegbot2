@@ -1,42 +1,31 @@
 import { Message } from "discord.js";
-import { Wegbot } from "../wegbot";
-import { WegbotCommandResult } from "./WegbotCommandResult";
+import { CommandResult } from "./CommandResult";
 
-export interface WegbotCommandProps {
-    ownerOnly?: boolean;
-    adminOnly?: boolean;
-}
+const REACT_OK: string = "👍";
+const REACT_NOT_OK: string = "👎";
 
 export abstract class WegbotCommand {
-
-    public static readonly errorReaction: string = "👎";
-
-    public get asContentStart(): string {
-        return "".concat(WegbotCommand.prefix, this.commandStr);
+    public get name(): string {
+        return this._name;
     }
 
-    public static readonly prefix: string = ".";
+    protected _name: string;
+    protected react: boolean;
 
-    public readonly commandStr: string;
-    private readonly props: WegbotCommandProps;
-
-    protected constructor(commandStr: string, props: WegbotCommandProps = {}) {
-        this.commandStr = commandStr;
-        this.props = props;
+    protected constructor(name: string, react?: boolean) {
+        this._name = name;
+        this.react = react || false;
     }
 
-    public async trigger(context: Message, bot?: Wegbot): Promise<WegbotCommandResult> {
-        return new Promise<WegbotCommandResult>(
-            async (resolve: (r: WegbotCommandResult) => void, reject: (r: WegbotCommandResult) => void) => {
-                const result: WegbotCommandResult = await this.execute(context, bot)
-                    .catch((r: WegbotCommandResult) => {
-                        context.react(WegbotCommand.errorReaction).catch(console.error);
-                        context.reply(r.reason).catch(console.error);
-                        return r;
-                    });
-                return result.success ? resolve(result) : reject(result);
-            });
+    public async execute(context: Message): Promise<string> {
+        const result: CommandResult = await this.onTriggered(context);
+
+        if (this.react) {
+            await context.react(result.success ? REACT_OK : REACT_NOT_OK);
+        }
+
+        return "command " + (result.success ? "success" : "failed") + ": " + this.name;
     }
 
-    protected abstract async execute(context: Message, bot?: Wegbot): Promise<WegbotCommandResult>;
+    protected abstract async onTriggered(context: Message): Promise<CommandResult>;
 }

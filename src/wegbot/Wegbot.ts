@@ -1,142 +1,66 @@
-import Discord, { Message } from "discord.js";
-import { WegbotCommand, WegbotCommandResult } from "../commands";
-import { ConfigManager } from "../config";
-import { WegbotEventHandler } from "../events";
-import { CommandUser, RequestableRole, WegbotConfig } from "../models";
+import Discord, { Message, Snowflake } from "discord.js";
+import Commands, { CommandMap, WegbotCommand } from "../commands";
 import { Credentials } from "./Credentials";
 import { WegbotOptions } from "./WegbotOptions";
 
 export class Wegbot {
-
-    public get users(): CommandUser[] {
-        return this._config.users;
-    }
-
-    public get roles(): RequestableRole[] {
-        return this._config.roles;
-    }
 
     public get token(): string | undefined {
         /* istanbul ignore next */
         return this._credentials.getString("DISCORD_TOKEN") || undefined;
     }
 
-    public get testChannelId(): number | undefined {
+    public get testChannelId(): Snowflake | undefined {
         /* istanbul ignore next */
-        return this._credentials.getNumber("DISCORD_TEST_CHANNEL_ID") || undefined;
+        return this._credentials.getString("DISCORD_TEST_CHANNEL_ID") || undefined;
     }
 
-    private static defaultConfig(): WegbotConfig {
-        return { users: [], roles: [] };
+    public get ownerId(): Snowflake | undefined {
+        /* istanbul ignore next */
+        return this._credentials.getString("DISCORD_OWNER_ID") || undefined;
     }
 
     public readonly dev: boolean;
-    public readonly discord: Discord.Client;
+    public discord: Discord.Client = new Discord.Client();
 
     private _credentials: Credentials = new Credentials();
-    private _commands: WegbotCommand[] = [];
-    private _config: WegbotConfig = Wegbot.defaultConfig();
+    private _commands: CommandMap = Commands.emptyMap();
 
     public constructor(options: WegbotOptions = {} as WegbotOptions) {
-        this.dev = !!options.dev;
-
-        this.discord = new Discord.Client();
-        this.discord.on("message", this.checkMessageForCommand.bind(this));
-
-        this.loadConfig();
+        this.dev = options.dev || false;
     }
 
     public start(): Promise<string> {
-        return this.discord.login(this.token);
+        this.init();
+        return this.login(this.token);
     }
 
-    public logout(): Promise<any> {
-        return this.discord.destroy();
+    public addCommand(command: WegbotCommand): void {
+        this._commands.set(command.name, command);
     }
 
-    public registerEventHandler<T>(handler: WegbotEventHandler<T>): void {
-        this.discord.on(handler.eventName, (t: T) => {
-            handler.onTriggered(t).catch((e) => { this.logError(e); });
-        });
+    private init(): void {
+        this.discord.on("message", this.onMessage.bind(this));
     }
 
-    public registerCommand(command: WegbotCommand): void {
-        this._commands.push(command);
+    private login(token?: string): Promise<string> {
+        return this.discord.login(token);
     }
 
-    public addRole(role: RequestableRole): void {
-        this._config.roles.push(role);
-    }
-
-    public saveConfig(): Promise<void> {
-        return new Promise<void>((resolve: () => void, reject: (e: NodeJS.ErrnoException) => void) => {
-            ConfigManager.save(this._config).then(resolve).catch(reject);
-        });
-    }
-
-    public logLine(msg: any): void {
-        if (!this.dev) {
-            console.log(msg);
-        }
-    }
-
-    public logError(msg: any, e?: Error): void {
-        if (!this.dev) {
-            console.error(msg);
-            if (e) {
-                console.error(e);
-            }
-        }
-    }
-
-    private addUserIfNotExist(m: Message): void {
-        if (!this._config.users.map((u: CommandUser) => u.id).includes(m.author.id)) {
-            this.logLine(`registering new user ${m.author.username}#${m.author.discriminator}`);
-            this._config.users.push({ id: m.author.id } as CommandUser);
-        }
-    }
-
-    private onCommandSuccess(result: WegbotCommandResult): void {
-        this.logLine(`SUCCESS: ${result.command.asContentStart}`);
-    }
-
-    private onCommandFailure(result: WegbotCommandResult): void {
-        this.logError(`FAILURE: ${result.command.asContentStart} - ${result.reason}`, result.error);
-    }
-
-    private checkMessageForCommand(message: Message): void {
-        this.addUserIfNotExist(message);
-
-        if (!message.cleanContent.startsWith(WegbotCommand.prefix)) {
+    private onMessage(message: Message): void {
+        if (!message.cleanContent.startsWith(Commands.prefix)) {
+            console.log();
             return;
         }
-        this._commands.forEach((c: WegbotCommand) => {
-            if (message.cleanContent.toUpperCase().startsWith(c.asContentStart.toUpperCase())) {
-                c.trigger(message, this).then(this.onCommandSuccess).catch(this.onCommandFailure);
-            }
-        });
-    }
 
-    private onConfigNotFound(): void {
-        this.logLine("WARN no config found, using default");
+        const firstWord: string = message.cleanContent.split(" ")[0].substring(1);
+        const command: WegbotCommand | undefined = this._commands.get(firstWord);
 
-        ConfigManager.save(this._config)
-            .catch((e: Error) => {
-                this.logError("also unable to save default config!", e);
-            });
-    }
+        if (!command) {
+            message.react("❓").then(() => "that's not a command").then(message.reply).catch(console.error);
+            return;
+        }
 
-    private loadConfig(): void {
-        ConfigManager.load()
-            .then((c: WegbotConfig) => {
-                this._config = c;
-                this.logLine(`loaded config: ${this._config.users.length} users, ${this._config.roles.length} roles`);
-            })
-            .catch((e: NodeJS.ErrnoException) => {
-                if (e.code === "ENOENT") {
-                    return this.onConfigNotFound();
-                }
-                throw e;
-            });
+        command.execute(message).then(console.log).catch(console.error);
     }
 }
