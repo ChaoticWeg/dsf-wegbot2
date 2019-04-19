@@ -1,48 +1,32 @@
 {
   "name": "dsf-wegbot2",
-  "version": "2.0.0",
+  "version": "2.0.1",
   "description": "Modbot for Dallas Sports Fam discord",
   "license": "GPL-3.0",
   "author": "Shawn Lutch <shawn@chaoticweg.cc> (https://chaoticweg.cc)",
   "private": true,
   "scripts": {
-    "type-check": "tsc --noEmit",
-    "type-check:watch": "yarn run type-check -- --watch",
-    "build": "yarn run build:types && yarn run build:js",
-    "build:types": "tsc --emitDeclarationOnly",
-    "build:js": "babel src --out-dir lib --extensions \".ts\" --source-maps inline --copy-files",
+    "build": "npx tsc && gulp copy",
+    "clean": "npx rimraf lib",
     "lint": "tslint --project .",
-    "test": "jest --setupFiles dotenv/config",
-    "test:build-first": "yarn build && yarn test",
-    "test:coverage": "jest --coverage --setupFiles dotenv/config",
-    "test:ci": "yarn run lint && yarn run test:coverage && cat ./coverage/lcov.info | coveralls",
     "start": "node lib/index.js",
-    "start:build-first": "yarn run build && yarn run start"
+    "test": "yarn run clean && yarn run build && yarn run start"
   },
   "dependencies": {
-    "@babel/runtime": "^7.4.2",
     "@types/dotenv": "^6.1.0",
     "discord.js": "^11.4.2",
     "dotenv": "^7.0.0",
     "lodash": "^4.17.11"
   },
   "devDependencies": {
-    "@babel/cli": "^7.2.3",
-    "@babel/core": "^7.3.4",
-    "@babel/plugin-proposal-class-properties": "^7.3.4",
-    "@babel/plugin-proposal-decorators": "^7.4.0",
-    "@babel/plugin-proposal-object-rest-spread": "^7.3.4",
-    "@babel/plugin-transform-runtime": "^7.4.0",
-    "@babel/preset-env": "^7.3.4",
-    "@babel/preset-typescript": "^7.3.3",
     "@types/jest": "^24.0.11",
     "@types/lodash": "^4.14.123",
     "@types/node": "^11.11.6",
-    "babel-jest": "^24.5.0",
-    "babel-preset-env": "^1.7.0",
-    "babel-register": "^6.26.0",
     "coveralls": "^3.0.3",
+    "gulp": "^4.0.0",
+    "gulp-cli": "^2.1.0",
     "jest": "^24.5.0",
+    "rimraf": "^2.6.3",
     "ts-jest": "^24.0.0",
     "tslint": "^5.14.0",
     "typescript": "^3.3.3333"
@@ -54,7 +38,12 @@
     "testEnvironment": "node",
     "coveragePathIgnorePatterns": [
       "/node_modules/",
-      "src/events/"
+      "/src/events/",
+      "/lib/"
+    ],
+    "testMatch": [
+      "<rootDir>/src/**/__tests__/**/*.[jt]s?(x)",
+      "**/?(*.)+(spec|test).[jt]s?(x)"
     ]
   }
 }

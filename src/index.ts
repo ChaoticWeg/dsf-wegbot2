@@ -1,19 +1,19 @@
-import { config as dotenv_config } from "dotenv";
-import { commands, WegbotCommand } from "./commands";
-import { events, WegbotEventHandler } from "./events";
+/* istanbul ignore file */
+
+import { AddRoleCommand, ClapCommand, HelpCommand, PingCommand, RemoveRoleCommand } from "./commands";
 import { Wegbot } from "./wegbot";
 
-// read environment variables
-dotenv_config();
-
-// create bot
+// create and initialize bot
 const bot = new Wegbot();
 
-// register all events
-events.forEach((e: WegbotEventHandler<any>) => bot.registerEventHandler(e));
-
-// register all commands
-commands.forEach((e: WegbotCommand) => bot.registerCommand(e));
+// register commands
+bot.addCommand(new PingCommand());
+bot.addCommand(new ClapCommand());
+bot.addCommand(new AddRoleCommand());
+bot.addCommand(new RemoveRoleCommand());
+bot.addCommand(new HelpCommand());
 
 // start bot
-bot.start().then(() => { console.log("logged in"); }).catch(console.error);
+bot.start().then(() => {
+    console.log("bot running");
+}).catch(console.error);

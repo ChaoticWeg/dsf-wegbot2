@@ -1,7 +1,10 @@
+import { config as dotenv_config } from "dotenv";
+
 export class Credentials {
     private _map: Map<string, any>;
 
     constructor() {
+        dotenv_config();
         this._map = new Map<string, any>(Object.entries(Object.assign({}, process.env)));
     }
 
