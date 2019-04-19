@@ -1,10 +1,18 @@
 import { Message } from "discord.js";
-import { CommandResult } from "../CommandResult";
-import { WegbotCommand } from "../WegbotCommand";
 
-export class PingCommand extends WegbotCommand {
+import { CommandResult } from "../CommandResult";
+import { WegbotCommand, WegbotCommandProps } from "../WegbotCommand";
+
+const props: WegbotCommandProps = {
+    name: "ping",
+    description: "Test command",
+    hide: true,
+    ownerOnly: true
+};
+
+export class PingCommand extends WegbotCommand<WegbotCommandProps> {
     public constructor() {
-        super("ping");
+        super(props);
     }
 
     protected async onTriggered(context: Message): Promise<CommandResult> {

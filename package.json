@@ -6,7 +6,7 @@
   "author": "Shawn Lutch <shawn@chaoticweg.cc> (https://chaoticweg.cc)",
   "private": true,
   "scripts": {
-    "build": "npx tsc",
+    "build": "npx tsc && gulp copy",
     "clean": "npx rimraf lib",
     "lint": "tslint --project .",
     "start": "node lib/index.js",
@@ -23,6 +23,8 @@
     "@types/lodash": "^4.14.123",
     "@types/node": "^11.11.6",
     "coveralls": "^3.0.3",
+    "gulp": "^4.0.0",
+    "gulp-cli": "^2.1.0",
     "jest": "^24.5.0",
     "rimraf": "^2.6.3",
     "ts-jest": "^24.0.0",

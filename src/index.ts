@@ -1,17 +1,17 @@
 /* istanbul ignore file */
 
-import { config as dotenv_config } from "dotenv";
-import { PingCommand } from "./commands";
+import { AddRoleCommand, ClapCommand, HelpCommand, PingCommand, RemoveRoleCommand } from "./commands";
 import { Wegbot } from "./wegbot";
-
-// read environment variables
-dotenv_config();
 
 // create and initialize bot
 const bot = new Wegbot();
 
 // register commands
 bot.addCommand(new PingCommand());
+bot.addCommand(new ClapCommand());
+bot.addCommand(new AddRoleCommand());
+bot.addCommand(new RemoveRoleCommand());
+bot.addCommand(new HelpCommand());
 
 // start bot
 bot.start().then(() => {

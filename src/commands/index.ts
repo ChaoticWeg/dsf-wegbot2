@@ -1,13 +1,18 @@
 import { CommandResult } from "./CommandResult";
-import { WegbotCommand } from "./WegbotCommand";
+import { WegbotCommand, WegbotCommandProps } from "./WegbotCommand";
 
-export type CommandMap = Map<string, WegbotCommand>;
+export type CommandMap = Map<string, WegbotCommand<WegbotCommandProps>>;
 
 export { CommandResult, WegbotCommand };
 
 export default {
-    emptyMap: () => new Map<string, WegbotCommand>(),
-    prefix: "?"
+    emptyMap: () => new Map<string, WegbotCommand<WegbotCommandProps>>(),
+    prefix: "."
 };
 
-export { PingCommand } from "./impl/PingCommand";
+export {
+    PingCommand,
+    ClapCommand,
+    AddRoleCommand, RemoveRoleCommand,
+    HelpCommand
+} from "./impl";
