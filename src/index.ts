@@ -1,6 +1,7 @@
 /* istanbul ignore file */
 
 import { AddRoleCommand, ClapCommand, HelpCommand, PingCommand, RemoveRoleCommand } from "./commands";
+import { UptimeCommand } from "./commands/impl";
 import { Wegbot } from "./wegbot";
 
 // create and initialize bot
@@ -12,6 +13,7 @@ bot.addCommand(new ClapCommand());
 bot.addCommand(new AddRoleCommand());
 bot.addCommand(new RemoveRoleCommand());
 bot.addCommand(new HelpCommand());
+bot.addCommand(new UptimeCommand());
 
 // start bot
 bot.start().then(() => {
