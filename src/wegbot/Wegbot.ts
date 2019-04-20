@@ -2,6 +2,7 @@ import Discord, { Emoji, GroupDMChannel, Guild, Message, Snowflake, TextChannel 
 
 import Commands, { CommandMap } from "../commands";
 import { GenericWegbotCommand } from "../commands/WegbotCommand";
+import { Uptime } from "../utils";
 
 import { Credentials } from "./Credentials";
 import { WegbotOptions } from "./WegbotOptions";
@@ -68,6 +69,7 @@ export class Wegbot {
     }
 
     private init(): void {
+        this.discord.on("ready", Uptime.ready);
         this.discord.on("message", this.onMessage.bind(this));
     }
 
