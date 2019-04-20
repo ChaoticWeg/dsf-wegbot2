@@ -57,6 +57,7 @@ export class Wegbot {
 
     public constructor(options: WegbotOptions = {} as WegbotOptions) {
         this.dev = options.dev || false;
+        process.on("exit", this.logout.bind(this));
     }
 
     public start(): Promise<string> {
@@ -77,6 +78,11 @@ export class Wegbot {
         return this.discord.login(token);
     }
 
+    private async logout(code: number): Promise<void> {
+        console.log(`logging out and exiting with code ${code}`);
+        await this.discord.destroy().catch(console.log);
+    }
+
     private async onMessage(message: Message): Promise<void> {
         // skip any messages from the bot
         if (message.author === this.discord.user) {
@@ -86,6 +92,13 @@ export class Wegbot {
         // react to pings
         if (message.mentions.users.has(this.discord.user.id)) {
             await Wegbot.reactPingSock(message);
+        }
+    
+        // makeshift logout command
+        if (message.cleanContent.split(" ")[0] === "!!wbkill" && message.author.id === Wegbot.ownerId) {
+            await message.reply("shutting down!").catch(console.log);
+            process.kill(0);
+            return;
         }
 
         // log message
