@@ -108,7 +108,8 @@ export class Wegbot {
         }
 
         // bail out if this is not a command
-        if (!message.cleanContent.startsWith(Commands.prefix)) {
+        if (!message.cleanContent.startsWith(Commands.prefix) ||
+            message.cleanContent.split(" ")[0].match(/^\?+$/)) {
             return;
         }
 
