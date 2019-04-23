@@ -8,9 +8,11 @@ yarn build
 build_ec=$?
 [ $build_ec -ne 0 ] && exit $build_ec
 
+ts=$(date +%s)
+
 # run bot while exit code is 420 (restart code)
-yarn start
+yarn start > "logs/${ts}.log"
 while [ $? -ne 0 ]; do
-    yarn start
+    yarn start > "logs/${ts}.log"
 done
 
