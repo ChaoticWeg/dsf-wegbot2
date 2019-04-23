@@ -1,6 +1,12 @@
 /* istanbul ignore file */
 
-import { AddRoleCommand, ClapCommand, HelpCommand, PingCommand, RemoveRoleCommand } from "./commands";
+import { 
+    AddRoleCommand, RemoveRoleCommand,
+    ClapCommand, PredsCommand,
+    HelpCommand,
+    PingCommand
+} from "./commands";
+
 import { UptimeCommand } from "./commands/impl";
 import { Wegbot } from "./wegbot";
 
@@ -9,7 +15,10 @@ const bot = new Wegbot();
 
 // register commands
 bot.addCommand(new PingCommand());
+
 bot.addCommand(new ClapCommand());
+bot.addCommand(new PredsCommand());
+
 bot.addCommand(new AddRoleCommand());
 bot.addCommand(new RemoveRoleCommand());
 bot.addCommand(new HelpCommand());
@@ -19,3 +28,4 @@ bot.addCommand(new UptimeCommand());
 bot.start().then(() => {
     console.log("bot running");
 }).catch(console.error);
+

@@ -12,7 +12,7 @@ export default {
 
 export {
     PingCommand,
-    ClapCommand,
+    ClapCommand, PredsCommand,
     AddRoleCommand, RemoveRoleCommand,
     HelpCommand
 } from "./impl";
