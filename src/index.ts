@@ -1,10 +1,13 @@
 /* istanbul ignore file */
 
-import { 
-    AddRoleCommand, RemoveRoleCommand,
-    ClapCommand, PredsCommand,
+import {
+    AddRoleCommand,
+    ClapCommand,
     HelpCommand,
-    PingCommand
+    PingCommand,
+    PredsCommand,
+    RemoveRoleCommand,
+    VGKCommand
 } from "./commands";
 
 import { UptimeCommand } from "./commands/impl";
@@ -18,6 +21,7 @@ bot.addCommand(new PingCommand());
 
 bot.addCommand(new ClapCommand());
 bot.addCommand(new PredsCommand());
+bot.addCommand(new VGKCommand());
 
 bot.addCommand(new AddRoleCommand());
 bot.addCommand(new RemoveRoleCommand());
@@ -28,4 +32,3 @@ bot.addCommand(new UptimeCommand());
 bot.start().then(() => {
     console.log("bot running");
 }).catch(console.error);
-
