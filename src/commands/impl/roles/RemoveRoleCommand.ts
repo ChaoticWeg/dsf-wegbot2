@@ -64,7 +64,8 @@ export class RemoveRoleCommand extends RoleCommand {
         }
 
         if (rolesAdded.length > 0) {
-            reply += `I just opted you out of the following role${rolesAdded.length > 1 ? "s" : ""}: \`${rolesAdded.join(", ")}\``;
+            reply += `I just opted you out of the following role${rolesAdded.length > 1 ? "s" : ""}: ` +
+                `\`${rolesAdded.map(r => r.name).join(", ")}\``;
         } else {
             reply += `it looks like you don't already have the following role${rolesNotAdded.length > 1 ? "s" : ""}: ` +
                 `\`${rolesNotAdded.map(r => r.name).join(", ")}\``;
