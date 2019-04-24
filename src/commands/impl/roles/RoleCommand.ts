@@ -47,15 +47,19 @@ export abstract class RoleCommand extends WegbotCommand<RoleCommandProps> {
 
     protected async addRoles(gm: GuildMember, roles: Role[]): Promise<Role[]> {
         const okRoles: Role[] = roles.filter(r => !gm.roles.has(r.id));
-        const reason: string = `Requested via ?${this.name} by ${gm}`;
+        const reason: string = this.getReason(gm);
         await gm.addRoles(okRoles, reason);
         return okRoles;
     }
 
     protected async removeRoles(gm: GuildMember, roles: Role[]): Promise<Role[]> {
         const okRoles: Role[] = roles.filter(r => gm.roles.has(r.id));
-        const reason: string = `Requested via ?${this.name} by ${gm}`;
+        const reason: string = this.getReason(gm);
         await gm.removeRoles(okRoles, reason);
         return okRoles;
+    }
+
+    private getReason(gm: GuildMember): string {
+        return `Requested via ?${this.name} by ${gm.user.username}#${gm.user.discriminator}`;
     }
 }

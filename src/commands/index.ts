@@ -7,12 +7,12 @@ export { CommandResult, WegbotCommand };
 
 export default {
     emptyMap: () => new Map<string, WegbotCommand<WegbotCommandProps>>(),
-    prefix: "."
+    prefix: "?"
 };
 
 export {
     PingCommand,
-    ClapCommand,
+    ClapCommand, PredsCommand, VGKCommand, VGKAltCommand,
     AddRoleCommand, RemoveRoleCommand,
-    HelpCommand
+    HelpCommand, UptimeCommand
 } from "./impl";
