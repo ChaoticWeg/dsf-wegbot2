@@ -91,7 +91,7 @@ export class Wegbot {
 
         // react to pings
         if (message.mentions.users.has(this.discord.user.id)) {
-            await MessageUtils.react(message, "pingsock");
+            await MessageUtils.react(message, "ping");
         }
 
         // makeshift logout command
