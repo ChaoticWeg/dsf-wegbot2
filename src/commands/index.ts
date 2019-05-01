@@ -7,7 +7,7 @@ export { CommandResult, WegbotCommand };
 
 export default {
     emptyMap: () => new Map<string, WegbotCommand<WegbotCommandProps>>(),
-    prefix: "?"
+    prefix: process.env.COMMAND_PREFIX || "?"
 };
 
 export {
