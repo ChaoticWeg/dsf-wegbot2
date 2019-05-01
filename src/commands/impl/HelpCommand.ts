@@ -1,23 +1,23 @@
 import { Message } from "discord.js";
 import { CommandGroup, CommandRegistry } from "../CommandRegistry";
 import { CommandResult } from "../CommandResult";
-import { GenericWegbotCommand, WegbotCommand, WegbotCommandProps } from "../WegbotCommand";
 import Commands from "../index";
+import { WegbotCommand, WegbotCommandProps } from "../WegbotCommand";
 
 const props: WegbotCommandProps = {
-    name: "help",
     description: "List available commands or usage for a specific command",
+    name: "help",
     usage: "[command?]"
 };
 
-function buildUsage(command: GenericWegbotCommand): string {
+function buildUsage(command: WegbotCommand): string {
     return `Usage: ${Commands.prefix}${command.name} ${command.usage || ""}`;
 }
 
-function buildHelpOne(commands: GenericWegbotCommand[], showUsage?: boolean): string {
+function buildHelpOne(commands: WegbotCommand[], showUsage?: boolean): string {
     return commands
-        .filter(c => !c.hide)
-        .map(c =>
+        .filter((c) => !c.hide)
+        .map((c) =>
             `${c.name}` + (c.description ? ` – ${c.description}` : "") +
             (showUsage ? `\n    ${buildUsage(c)}` : "")
         )
@@ -29,36 +29,33 @@ function buildHelpGroup(group: CommandGroup): string {
 }
 
 export class HelpCommand extends WegbotCommand<WegbotCommandProps> {
-    public constructor() {
-        super(props);
-    }
 
     private static getAll(): string {
         return CommandRegistry.groups.map(buildHelpGroup).join("\n---\n");
     }
 
-    private getOne(name: string): string {
-        return buildHelpOne(CommandRegistry.commands.filter(c => c.name.toLowerCase() === name.toLowerCase()), true);
+    public constructor() {
+        super(props);
     }
 
     protected async onTriggered(context: Message, args: string[]): Promise<CommandResult> {
         // multi-level commands are not supported yet
         if (args.length > 1) {
             return {
-                success: false,
-                reason: "multi-level commands are not supported yet"
+                reason: "multi-level commands are not supported yet",
+                success: false
             };
         }
 
-        let helpText: string = args.length > 0 ? this.getOne(args[0]) : HelpCommand.getAll();
+        const helpText: string = args.length > 0 ? this.getOne(args[0]) : HelpCommand.getAll();
 
         // reply will be an empty string if no such command
         if (!helpText) {
             return {
-                success: false,
                 reason: args.length > 0
                     ? `I don't know of any command called \`${args[0]}\``
-                    : "I don't know of any commands at all!"
+                    : "I don't know of any commands at all!",
+                success: false
             };
         }
 
@@ -68,5 +65,9 @@ export class HelpCommand extends WegbotCommand<WegbotCommandProps> {
         return {
             success: true
         };
+    }
+
+    private getOne(name: string): string {
+        return buildHelpOne(CommandRegistry.commands.filter((c) => c.name.toLowerCase() === name.toLowerCase()), true);
     }
 }

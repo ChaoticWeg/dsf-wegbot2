@@ -8,8 +8,6 @@ import Commands from ".";
 const REACT_OK: string = "👍";
 const REACT_NOT_OK: string = "👎";
 
-export type GenericWegbotCommand = WegbotCommand<WegbotCommandProps>;
-
 export interface WegbotCommandProps {
     name: string;           // name of command
     group?: string;         // group
@@ -20,7 +18,7 @@ export interface WegbotCommandProps {
     ownerOnly?: boolean;    // restrict access to owner only
 }
 
-export abstract class WegbotCommand<T extends WegbotCommandProps> {
+export abstract class WegbotCommand<T extends WegbotCommandProps = WegbotCommandProps> {
     protected props: T;
 
     protected constructor(props: T) {
@@ -67,7 +65,7 @@ export abstract class WegbotCommand<T extends WegbotCommandProps> {
         if (!result.success && (result.reason || result.showUsage)) {
             let reply: string = `${result.reason ? result.reason + "\n" : ""}`;
             if (result.showUsage && this.usage) {
-                let prefix: string = Commands.prefix;
+                const prefix: string = Commands.prefix;
                 reply += `\`\`\`\n${prefix}${this.name} ${this.usage.trim()}\n\`\`\``;
             }
             if (reply && reply !== "") {

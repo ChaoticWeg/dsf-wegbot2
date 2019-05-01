@@ -9,4 +9,3 @@ export class PredsCommand extends EchoCommand {
         super(props);
     }
 }
-

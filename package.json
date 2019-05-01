@@ -10,7 +10,7 @@
     "clean": "npx rimraf lib",
     "lint": "tslint --project .",
     "start": "node lib/index.js",
-    "test": "yarn run clean && yarn run build && yarn run start"
+    "test": "yarn run clean && yarn run lint && yarn run build && yarn run start"
   },
   "dependencies": {
     "@types/dotenv": "^6.1.0",

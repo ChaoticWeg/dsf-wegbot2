@@ -1,8 +1,9 @@
 import { GuildMember, Message, Role } from "discord.js";
 import { CommandResult } from "../../CommandResult";
-import { RoleCommand, RoleCommandProps } from "./RoleCommand";
+import { WegbotCommandProps } from "../../WegbotCommand";
+import { RoleCommand } from "./RoleCommand";
 
-const props: RoleCommandProps = {
+const props: WegbotCommandProps = {
     description: "Opt out of a role you previously opted into",
     name: "removerole",
     usage: "role",
@@ -21,11 +22,11 @@ export class RemoveRoleCommand extends RoleCommand {
                 success: false,
                 reason: "tell me which role(s) you don't want anymore!",
                 showUsage: true
-            }
+            };
         }
 
         // map all args to lower case
-        args = args.map(arg => arg.toLowerCase());
+        args = args.map((arg) => arg.toLowerCase());
 
         // reply to be sent if roles are given successfully
         let reply: string = "";
@@ -54,7 +55,7 @@ export class RemoveRoleCommand extends RoleCommand {
 
         // add roles
         const rolesAdded = await this.removeRoles(gm, rta);
-        const rolesNotAdded = rta.filter(r => !rolesAdded.includes(r));
+        const rolesNotAdded = rta.filter((r) => !rolesAdded.includes(r));
 
         // warn user if any of the roles were ineligible (but there were some that were ok)
         if (ineligibleNames.length > 0) {
@@ -65,10 +66,10 @@ export class RemoveRoleCommand extends RoleCommand {
 
         if (rolesAdded.length > 0) {
             reply += `I just opted you out of the following role${rolesAdded.length > 1 ? "s" : ""}: ` +
-                `\`${rolesAdded.map(r => r.name).join(", ")}\``;
+                `\`${rolesAdded.map((r) => r.name).join(", ")}\``;
         } else {
             reply += `it looks like you don't already have the following role${rolesNotAdded.length > 1 ? "s" : ""}: ` +
-                `\`${rolesNotAdded.map(r => r.name).join(", ")}\``;
+                `\`${rolesNotAdded.map((r) => r.name).join(", ")}\``;
         }
 
         // send reply

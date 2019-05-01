@@ -1,8 +1,9 @@
 import { GuildMember, Message, Role } from "discord.js";
 import { CommandResult } from "../../CommandResult";
-import { RoleCommand, RoleCommandProps } from "./RoleCommand";
+import { WegbotCommandProps } from "../../WegbotCommand";
+import { RoleCommand } from "./RoleCommand";
 
-const props: RoleCommandProps = {
+const props: WegbotCommandProps = {
     description: "Request one or more opt-in roles",
     name: "addrole",
     usage: "role [role2 ... roleN]",
@@ -21,11 +22,11 @@ export class AddRoleCommand extends RoleCommand {
                 success: false,
                 reason: "tell me which role(s) you want!",
                 showUsage: true
-            }
+            };
         }
 
         // map all args to lower case
-        args = args.map(arg => arg.toLowerCase());
+        args = args.map((arg) => arg.toLowerCase());
 
         // reply to be sent if roles are given successfully
         let reply: string = "";
@@ -54,10 +55,10 @@ export class AddRoleCommand extends RoleCommand {
 
         // add roles
         const rolesAdded: Role[] = await this.addRoles(gm, rta);
-        const roleNamesAdded: string[] = rolesAdded.map(r => r.name);
+        const roleNamesAdded: string[] = rolesAdded.map((r) => r.name);
 
-        const rolesNotAdded: Role[] = rta.filter(r => !rolesAdded.includes(r));
-        const roleNamesNotAdded: string[] = rolesNotAdded.map(r => r.name);
+        const rolesNotAdded: Role[] = rta.filter((r) => !rolesAdded.includes(r));
+        const roleNamesNotAdded: string[] = rolesNotAdded.map((r) => r.name);
 
         // warn user if any of the roles were ineligible (but there were some that were ok)
         if (ineligibleNames.length > 0) {

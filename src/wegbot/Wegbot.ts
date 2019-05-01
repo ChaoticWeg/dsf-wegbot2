@@ -1,8 +1,7 @@
 import Discord, { Emoji, Guild, Message, Snowflake } from "discord.js";
 
-import Commands, { CommandMap } from "../commands";
-import { GenericWegbotCommand } from "../commands/WegbotCommand";
-import { EventHandler, EventName, EventsMap } from "../events";
+import Commands, { CommandMap, WegbotCommand } from "../commands";
+import { EventHandler, EventName, EventsMap, MessageEvents } from "../events";
 import { MessageUtils, Uptime } from "../utils";
 
 import { Credentials } from "./Credentials";
@@ -25,7 +24,7 @@ export class Wegbot {
         return this._credentials.getString("DISCORD_OWNER_ID") || undefined;
     }
 
-    public get commands(): GenericWegbotCommand[] {
+    public get commands(): WegbotCommand[] {
         return Array.from(this._commands.values());
     }
 
@@ -60,7 +59,7 @@ export class Wegbot {
         return this.login(Wegbot.token);
     }
 
-    public addCommand(command: GenericWegbotCommand): void {
+    public addCommand(command: WegbotCommand): void {
         this._commands.set(command.name, command);
     }
 
@@ -72,7 +71,8 @@ export class Wegbot {
         this.discord.on("ready", Uptime.ready);
         this.discord.on("message", this.onMessage.bind(this));
 
-        this.addEvent("message", MessageUtils.logMessageAsync);
+        MessageEvents.asList().forEach((h) => this.addEvent("message", h));
+
     }
 
     private login(token?: string): Promise<string> {
@@ -95,7 +95,7 @@ export class Wegbot {
         const words: string[] = message.cleanContent.split(" ");
         const firstWord: string = words[0].substring(Commands.prefix.length);
         const args: string[] = words.slice(1);
-        const command: GenericWegbotCommand | undefined = this._commands.get(firstWord);
+        const command: WegbotCommand | undefined = this._commands.get(firstWord);
 
         // execute if found, else handle command not found
         return command
