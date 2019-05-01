@@ -11,8 +11,8 @@ build_ec=$?
 ts=$(date +%s)
 
 # run bot while exit code is 420 (restart code)
-yarn start > "logs/${ts}.log"
+yarn start | tee "logs/${ts}.log"
 while [ $? -ne 0 ]; do
-    yarn start > "logs/${ts}.log"
+    yarn start | tee "logs/${ts}.log"
 done
 
