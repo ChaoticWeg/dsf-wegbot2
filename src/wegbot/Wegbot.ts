@@ -1,32 +1,12 @@
-import Discord, { Emoji, GroupDMChannel, Guild, Message, Snowflake, TextChannel } from "discord.js";
+import Discord, { Emoji, Guild, Message, Snowflake } from "discord.js";
 
 import Commands, { CommandMap } from "../commands";
 import { GenericWegbotCommand } from "../commands/WegbotCommand";
-import { Uptime } from "../utils";
+import { EventHandler, EventName, EventsMap } from "../events";
+import { MessageUtils, Uptime } from "../utils";
 
 import { Credentials } from "./Credentials";
 import { WegbotOptions } from "./WegbotOptions";
-
-function formatMessage(message: Message): string {
-    let prefix: string = "";
-
-    if (message.guild) {
-        if (message.channel.type === "text") {
-            let textChannel: TextChannel = message.channel as TextChannel;
-            prefix = `${message.guild.name} #${textChannel.name}${textChannel.nsfw ? " (nsfw)" : ""} `
-                + `${message.author.username}#${message.author.discriminator}`
-        }
-    } else {
-        if (message.channel.type === "dm") {
-            prefix = `[DM] <${message.author.username}#${message.author.discriminator}>`;
-        } else if (message.channel.type === "group") {
-            let groupDm: GroupDMChannel = message.channel as GroupDMChannel;
-            prefix = `[DM: ${groupDm.name}] <${message.author.username}#${message.author.discriminator}>`;
-        }
-    }
-
-    return `${prefix || `[${message.channel.type}]`} - ${message.cleanContent}`;
-}
 
 export class Wegbot {
 
@@ -49,15 +29,30 @@ export class Wegbot {
         return Array.from(this._commands.values());
     }
 
-    public readonly dev: boolean;
-    public discord: Discord.Client = new Discord.Client();
+    public static getEmojiByName(guild: Guild, name: string): Emoji | null {
+        name = name.toLowerCase();
+        const emoji: Emoji[] = Array.from(guild.emojis.values()).filter((e) => e.name.toLowerCase() === name);
+        return emoji.length > 0 ? emoji[0] : null;
+    }
 
     private static _credentials: Credentials = new Credentials();
+
+    private static async reactPingSock(message: Message): Promise<void> {
+        const pingsock = Wegbot.getEmojiByName(message.guild, "pingsock");
+        if (!pingsock) {
+            return;
+        }
+
+        await message.react(pingsock);
+    }
+
+    public readonly dev: boolean;
+    public discord: Discord.Client = new Discord.Client();
     private _commands: CommandMap = Commands.emptyMap();
+    private _events: EventsMap = new EventsMap();
 
     public constructor(options: WegbotOptions = {} as WegbotOptions) {
         this.dev = options.dev || false;
-        process.on("exit", this.logout.bind(this));
     }
 
     public start(): Promise<string> {
@@ -69,18 +64,55 @@ export class Wegbot {
         this._commands.set(command.name, command);
     }
 
+    public addEvent<T>(name: EventName, handler: EventHandler<T>): void {
+        this._events.add(name, handler);
+    }
+
     private init(): void {
         this.discord.on("ready", Uptime.ready);
         this.discord.on("message", this.onMessage.bind(this));
+
+        this.addEvent("message", MessageUtils.logMessageAsync);
     }
 
     private login(token?: string): Promise<string> {
+        process.on("exit", this.logout.bind(this));
         return this.discord.login(token);
     }
 
     private async logout(code: number): Promise<void> {
         console.log(`logging out and exiting with code ${code}`);
-        await this.discord.destroy().catch(console.log);
+        return this.discord.destroy().catch(console.log);
+    }
+
+    private async processCommands(message: Message): Promise<void> {
+        // bail out if this is not a command
+        if (!MessageUtils.isCommand(message.cleanContent)) {
+            return;
+        }
+
+        // get the first word with the command prefix stripped
+        const firstWord: string = message.cleanContent.split(" ")[0].substring(Commands.prefix.length);
+        const args: string[] = message.cleanContent.split(" ").slice(1);
+        const command: GenericWegbotCommand | undefined = this._commands.get(firstWord);
+
+        // execute if found, else handle command not found
+        return command
+            ? command.execute(message, args).then(console.log).catch(console.error)
+            : this.onCommandNotFound(message);
+    }
+
+    private async onCommandNotFound(message: Message): Promise<void> {
+        // toss a BM :supereyes: in there if the server has it
+        const supereyes: Emoji | null = Wegbot.getEmojiByName(message.guild, "supereyes");
+        const supereyesText: string = supereyes ? ` ${supereyes}` : "";
+
+        const prefix: string = Commands.prefix;
+
+        message.react("❓").then(async () => {
+            await message.reply(`that's not a command. Use \`${prefix}help\` if you need it. ${supereyesText}`);
+        }).catch(console.error);
+        return;
     }
 
     private async onMessage(message: Message): Promise<void> {
@@ -93,58 +125,18 @@ export class Wegbot {
         if (message.mentions.users.has(this.discord.user.id)) {
             await Wegbot.reactPingSock(message);
         }
-    
+
         // makeshift logout command
         if (message.cleanContent.split(" ")[0] === "!!wbkill" && message.author.id === Wegbot.ownerId) {
             await message.reply("shutting down!").catch(console.log);
-            process.kill(0);
+            this.logout(0).then(process.exit(0));
             return;
         }
 
-        // log message
-        const loggedText: string = formatMessage(message);
-        if (loggedText) {
-            console.log(loggedText);
-        }
+        (this._events.get("message") || []).forEach((h) => {
+            h(message).catch(console.log);
+        });
 
-        // bail out if this is not a command
-        if (!message.cleanContent.startsWith(Commands.prefix) ||
-            message.cleanContent.split(" ")[0].match(/^\?+$/)) {
-            return;
-        }
-
-        // get the first word with the command prefix stripped
-        const firstWord: string = message.cleanContent.split(" ")[0].substring(Commands.prefix.length);
-        const args: string[] = message.cleanContent.split(" ").slice(1);
-        const command: GenericWegbotCommand | undefined = this._commands.get(firstWord);
-
-        if (!command) {
-            let supereyes: Emoji | null = Wegbot.getEmojiByName(message.guild, "supereyes");
-            let supereyesText: string = supereyes ? ` ${supereyes}` : "";
-
-            const prefix: string = Commands.prefix;
-
-            message.react("❓").then(async () => {
-                await message.reply(`that's not a command. Use \`${prefix}help\` if you need it. ${supereyesText}`);
-            }).catch(console.error);
-            return;
-        }
-
-        command.execute(message, args).then(console.log).catch(console.error);
-    }
-
-    public static getEmojiByName(guild: Guild, name: string): Emoji | null {
-        name = name.toLowerCase();
-        const emoji: Emoji[] = Array.from(guild.emojis.values()).filter(e => e.name.toLowerCase() === name);
-        return emoji.length > 0 ? emoji[0] : null;
-    }
-
-    private static async reactPingSock(message: Message): Promise<void> {
-        const pingsock = Wegbot.getEmojiByName(message.guild, "pingsock");
-        if (!pingsock) {
-            return;
-        }
-
-        await message.react(pingsock);
+        await this.processCommands(message);
     }
 }
