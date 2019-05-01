@@ -1,5 +1,6 @@
 import { Message, MessageReaction } from "discord.js";
 import MessageEvents from "./message";
+import MessageReactionAddEvents from "./messageReactionAdd";
 
 export type EventName = "message" | "messageReactionAdd";
 export type EventHandler<T = any> = (t: T) => Promise<void>;
@@ -23,4 +24,4 @@ export class EventsMap extends Map<EventName, EventHandler[]> {
     }
 }
 
-export { MessageEvents };
+export { MessageEvents, MessageReactionAddEvents };

@@ -1,7 +1,9 @@
-import { GroupDMChannel, Message, TextChannel } from "discord.js";
+import { Emoji, GroupDMChannel, Message, TextChannel } from "discord.js";
 import Commands from "../commands";
+import { EmojiUtils } from "./EmojiUtils";
 
 export namespace MessageUtils {
+
     export function formatMessage(message: Message): string {
         let prefix: string = "";
 
@@ -51,5 +53,27 @@ export namespace MessageUtils {
                 return reject(err);
             }
         });
+    }
+
+    export async function onCommandNotFound(message: Message): Promise<void> {
+        // toss a BM :supereyes: in there if the server has it
+        const supereyes: Emoji | null = EmojiUtils.getEmojiByName(message.guild, "supereyes");
+        const supereyesText: string = supereyes ? ` ${supereyes}` : "";
+
+        const prefix: string = Commands.prefix;
+
+        message.react("❓").then(async () => {
+            await message.reply(`that's not a command. Use \`${prefix}help\` if you need it. ${supereyesText}`);
+        }).catch(console.error);
+        return;
+    }
+
+    export async function react(message: Message, emojiName: string): Promise<void> {
+        const pingsock = EmojiUtils.getEmojiByName(message.guild, emojiName);
+        if (!pingsock) {
+            return;
+        }
+
+        await message.react(pingsock);
     }
 }
