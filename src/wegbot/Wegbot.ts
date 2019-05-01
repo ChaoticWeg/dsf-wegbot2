@@ -92,8 +92,9 @@ export class Wegbot {
         }
 
         // get the first word with the command prefix stripped
-        const firstWord: string = message.cleanContent.split(" ")[0].substring(Commands.prefix.length);
-        const args: string[] = message.cleanContent.split(" ").slice(1);
+        const words: string[] = message.cleanContent.split(" ");
+        const firstWord: string = words[0].substring(Commands.prefix.length);
+        const args: string[] = words.slice(1);
         const command: GenericWegbotCommand | undefined = this._commands.get(firstWord);
 
         // execute if found, else handle command not found
