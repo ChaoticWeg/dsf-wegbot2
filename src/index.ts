@@ -2,6 +2,7 @@
 
 import {
     AddRoleCommand,
+    CanesCommand,
     ClapCommand,
     HelpCommand,
     PingCommand,
@@ -24,6 +25,7 @@ bot.addCommand(new ClapCommand());
 bot.addCommand(new PredsCommand());
 bot.addCommand(new VGKCommand());
 bot.addCommand(new VGKAltCommand());
+bot.addCommand(new CanesCommand());
 
 bot.addCommand(new AddRoleCommand());
 bot.addCommand(new RemoveRoleCommand());
