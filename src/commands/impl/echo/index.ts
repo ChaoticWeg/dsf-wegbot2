@@ -1,5 +1,9 @@
-export { ClapCommand } from "./ClapCommand";
-export { PredsCommand } from "./PredsCommand";
-export { VGKCommand } from "./VGKCommand";
-export { VGKAltCommand } from "./VGKAltCommand";
-export { CanesCommand } from "./CanesCommand";
+import Contents from "./Contents";
+import { EchoCommand, EchoCommandFootprint } from "./EchoCommand";
+
+function commandFromFootprint(fp: EchoCommandFootprint): EchoCommand {
+    return new EchoCommand(fp);
+}
+
+const commands: EchoCommand[] = Contents.map(commandFromFootprint);
+export default commands;

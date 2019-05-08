@@ -26,27 +26,27 @@ export abstract class WegbotCommand<T extends WegbotCommandProps = WegbotCommand
         CommandRegistry.add(this);
     }
 
-    public get name() {
+    public get name(): string {
         return this.props.name;
     }
 
-    public get react() {
-        return this.props.react;
+    public get react(): boolean {
+        return !!this.props.react;
     }
 
-    public get description() {
+    public get description(): string | undefined {
         return this.props.description;
     }
 
-    public get usage() {
+    public get usage(): string | undefined {
         return this.props.usage;
     }
 
-    public get hide() {
-        return this.props.hide;
+    public get hide(): boolean {
+        return !!this.props.hide;
     }
 
-    public get group() {
+    public get group(): string | undefined {
         return this.props.group;
     }
 
