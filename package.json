@@ -9,8 +9,11 @@
     "build": "npx tsc && gulp copy",
     "clean": "npx rimraf lib",
     "lint": "npx tslint --project .",
-    "start": "node lib/index.js",
-    "test": "yarn run clean && yarn run lint && yarn run build && yarn run start"
+    "restart": "npx pm2 restart ecosystem.config.js --update-env",
+    "start": "npx pm2 start ecosystem.config.js",
+    "status": "npx pm2 status ecosystem.config.js",
+    "stop": "npx pm2 stop ecosystem.config.js",
+    "test": "yarn run clean && yarn run lint && yarn run build && node lib/index.js"
   },
   "dependencies": {
     "@types/dotenv": "^6.1.0",
