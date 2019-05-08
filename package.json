@@ -9,11 +9,12 @@
     "build": "npx tsc && gulp copy",
     "clean": "npx rimraf lib",
     "lint": "npx tslint --project .",
+    "logs": "npx pm2 logs dsf-wegbot2",
     "restart": "npx pm2 restart ecosystem.config.js --update-env",
-    "start": "npx pm2 start ecosystem.config.js",
+    "start": "npx pm2 start ecosystem.config.js --env production",
     "status": "npx pm2 status ecosystem.config.js",
     "stop": "npx pm2 stop ecosystem.config.js",
-    "test": "yarn run clean && yarn run lint && yarn run build && node lib/index.js"
+    "test": "npx pm2 start ecosystem.config.js --env development --watch"
   },
   "dependencies": {
     "@types/dotenv": "^6.1.0",

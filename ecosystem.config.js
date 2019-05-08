@@ -9,10 +9,14 @@ module.exports = {
     watch: false,
     max_memory_restart: '1G',
     env: {
-      NODE_ENV: 'development'
+      NODE_ENV: 'development',
+      PIN_THRESHOLD: '1',
+      COMMAND_PREFIX: '.'
     },
     env_production: {
-      NODE_ENV: 'production'
+      NODE_ENV: 'production',
+      PIN_THRESHOLD: '3',
+      COMMAND_PREFIX: '?'
     }
   }]
 };
