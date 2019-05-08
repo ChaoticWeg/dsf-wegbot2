@@ -34,20 +34,20 @@ export abstract class WegbotCommand<T extends WegbotCommandProps = WegbotCommand
         return !!this.props.react;
     }
 
-    public get description(): string | undefined {
-        return this.props.description;
+    public get description(): string {
+        return this.props.description || "";
     }
 
-    public get usage(): string | undefined {
-        return this.props.usage;
+    public get usage(): string {
+        return this.props.usage || "";
     }
 
     public get hide(): boolean {
         return !!this.props.hide;
     }
 
-    public get group(): string | undefined {
-        return this.props.group;
+    public get group(): string {
+        return this.props.group || "(none)";
     }
 
     public async execute(context: Message, args?: string[]): Promise<string | Error> {
