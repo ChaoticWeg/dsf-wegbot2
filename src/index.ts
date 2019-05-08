@@ -1,18 +1,6 @@
 /* istanbul ignore file */
 
-import {
-    AddRoleCommand,
-    CanesCommand,
-    ClapCommand,
-    HelpCommand,
-    PingCommand,
-    PredsCommand,
-    RemoveRoleCommand,
-    UptimeCommand,
-    VGKAltCommand,
-    VGKCommand
-} from "./commands";
-
+import { AddRoleCommand, EchoCommands, HelpCommand, PingCommand, RemoveRoleCommand, UptimeCommand } from "./commands";
 import { Wegbot } from "./wegbot";
 
 // create and initialize bot
@@ -20,17 +8,12 @@ const bot = new Wegbot();
 
 // register commands
 bot.addCommand(new PingCommand());
-
-bot.addCommand(new ClapCommand());
-bot.addCommand(new PredsCommand());
-bot.addCommand(new VGKCommand());
-bot.addCommand(new VGKAltCommand());
-bot.addCommand(new CanesCommand());
-
 bot.addCommand(new AddRoleCommand());
 bot.addCommand(new RemoveRoleCommand());
 bot.addCommand(new HelpCommand());
 bot.addCommand(new UptimeCommand());
+
+EchoCommands.forEach(bot.addCommand.bind(bot));
 
 // start bot
 bot.start().then(() => {

@@ -12,8 +12,7 @@ export default {
 
 export {
     PingCommand,
-    ClapCommand, PredsCommand, VGKCommand, VGKAltCommand,
     AddRoleCommand, RemoveRoleCommand,
     HelpCommand, UptimeCommand,
-    CanesCommand
+    EchoCommands
 } from "./impl";

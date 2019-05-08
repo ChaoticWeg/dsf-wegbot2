@@ -1,33 +1,38 @@
 import { Message } from "discord.js";
-import { readFile } from "fs";
-import { join } from "path";
-import { promisify } from "util";
 import { CommandResult } from "../../CommandResult";
+import { WegbotCommand } from "../../WegbotCommand";
 
-import { WegbotCommand, WegbotCommandProps } from "../../WegbotCommand";
-
-export interface EchoCommandProps extends WegbotCommandProps {
-    filename?: string;
+export interface EchoCommandFootprint {
+    name: string;
+    contents: string;
 }
 
-export abstract class EchoCommand extends WegbotCommand<EchoCommandProps> {
-    protected static readFile = promisify(readFile);
+export class EchoCommand extends WegbotCommand {
+    private readonly content: string;
 
-    protected filename: string;
+    public constructor(fp: EchoCommandFootprint) {
+        super({
+            group: "echo",
+            name: fp.name
+        });
 
-    protected constructor(props: EchoCommandProps) {
-        super({ group: "shitposts", ...props });
-        this.filename = join(__dirname, "contents", `${props.filename || props.name}.txt`);
-    }
-
-    protected async readFileContents(): Promise<string> {
-        return await EchoCommand.readFile(this.filename, "utf8");
+        this.content = fp.contents;
     }
 
     protected async onTriggered(context: Message): Promise<CommandResult> {
-        const text = await this.readFileContents();
-        await context.channel.send(text, { reply: undefined });
-
-        return { success: true };
+        return context.channel.send(this.content).then(this.onSuccess.bind(this)).catch(this.onFailure.bind(this));
     }
+
+    // tslint:disable:semicolon
+
+    private onSuccess = (): CommandResult => ({
+        success: true
+    });
+
+    private onFailure = (err: any): CommandResult => ({
+        success: false,
+        reason: err.toString()
+    });
+
+    // tslint:enable:semicolon
 }
