@@ -4,6 +4,7 @@ coverage/*
 **/creds.json
 **/.vscode/
 **/.idea/
+*.swp
 
 # Logs
 logs
