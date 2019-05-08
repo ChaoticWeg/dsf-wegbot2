@@ -8,7 +8,7 @@
   "scripts": {
     "build": "npx tsc && gulp copy",
     "clean": "npx rimraf lib",
-    "lint": "tslint --project .",
+    "lint": "npx tslint --project .",
     "start": "node lib/index.js",
     "test": "yarn run clean && yarn run lint && yarn run build && yarn run start"
   },
