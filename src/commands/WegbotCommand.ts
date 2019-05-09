@@ -1,9 +1,9 @@
 import { Message } from "discord.js";
-import { Wegbot } from "../wegbot";
-import { CommandRegistry } from "./CommandRegistry";
-import { CommandResult } from "./CommandResult";
 
 import Commands from ".";
+import Credentials from "../credentials";
+import { CommandRegistry } from "./CommandRegistry";
+import { CommandResult } from "./CommandResult";
 
 const REACT_OK: string = "👍";
 const REACT_NOT_OK: string = "👎";
@@ -51,7 +51,7 @@ export abstract class WegbotCommand<T extends WegbotCommandProps = WegbotCommand
     }
 
     public async execute(context: Message, args?: string[]): Promise<string | Error> {
-        if (this.props.ownerOnly && context.author.id !== Wegbot.ownerId) {
+        if (this.props.ownerOnly && context.author.id !== Credentials.discord.ownerId) {
             await context.react(REACT_NOT_OK);
             return `owner-only command ${this.name} used by ${context.author}`;
         }

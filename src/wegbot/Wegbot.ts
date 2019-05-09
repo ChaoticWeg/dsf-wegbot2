@@ -1,28 +1,13 @@
-import Discord, { Message, MessageReaction, Snowflake } from "discord.js";
+import Discord, { Message, MessageReaction } from "discord.js";
 
 import Commands, { CommandMap, WegbotCommand } from "../commands";
+
+import Credentials from "../credentials";
 import { EventHandler, EventName, EventsMap, MessageEvents, MessageReactionAddEvents } from "../events";
 import { MessageUtils, Uptime } from "../utils";
-
-import { Credentials } from "./Credentials";
 import { WegbotOptions } from "./WegbotOptions";
 
 export class Wegbot {
-
-    public static get token(): string | undefined {
-        /* istanbul ignore next */
-        return this._credentials.getString("DISCORD_TOKEN") || undefined;
-    }
-    public static get ownerId(): Snowflake | undefined {
-        /* istanbul ignore next */
-        return this._credentials.getString("DISCORD_OWNER_ID") || undefined;
-    }
-
-    public get commands(): WegbotCommand[] {
-        return Array.from(this._commands.values());
-    }
-
-    private static _credentials: Credentials = new Credentials();
 
     public readonly dev: boolean;
     public discord: Discord.Client = new Discord.Client();
@@ -35,7 +20,7 @@ export class Wegbot {
 
     public start(): Promise<string> {
         this.init();
-        return this.login(Wegbot.token);
+        return this.login(Credentials.discord.token);
     }
 
     public addCommand(command: WegbotCommand): void {
@@ -95,7 +80,7 @@ export class Wegbot {
         }
 
         // makeshift logout command
-        if (message.cleanContent.split(" ")[0] === "!!wbkill" && message.author.id === Wegbot.ownerId) {
+        if (message.cleanContent.split(" ")[0] === "!!wbkill" && message.author.id === Credentials.discord.ownerId) {
             await message.reply("shutting down!").catch(console.log);
             this.logout(0).then(process.exit(0));
             return;
