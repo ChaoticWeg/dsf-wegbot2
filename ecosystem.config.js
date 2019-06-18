@@ -15,7 +15,7 @@ module.exports = {
     },
     env_production: {
       NODE_ENV: 'production',
-      PIN_THRESHOLD: '3',
+      PIN_THRESHOLD: '2',
       COMMAND_PREFIX: '?'
     }
   }]
