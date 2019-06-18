@@ -9,11 +9,6 @@ module.exports = {
     watch: false,
     max_memory_restart: '1G',
     env: {
-      NODE_ENV: 'development',
-      PIN_THRESHOLD: '1',
-      COMMAND_PREFIX: '.'
-    },
-    env_production: {
       NODE_ENV: 'production',
       PIN_THRESHOLD: '2',
       COMMAND_PREFIX: '?'
