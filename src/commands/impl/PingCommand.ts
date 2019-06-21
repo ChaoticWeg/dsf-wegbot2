@@ -10,7 +10,7 @@ const props: WegbotCommandProps = {
     ownerOnly: true
 };
 
-export class PingCommand extends WegbotCommand<WegbotCommandProps> {
+export class PingCommand extends WegbotCommand {
     public constructor() {
         super(props);
     }
