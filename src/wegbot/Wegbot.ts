@@ -1,6 +1,7 @@
 import Discord, { Message, MessageReaction, Snowflake } from "discord.js";
 
 import Commands, { CommandMap, WegbotCommand } from "../commands";
+import * as Database from "../database";
 import { EventHandler, EventName, EventsMap, MessageEvents, MessageReactionAddEvents } from "../events";
 import { MessageUtils, Uptime } from "../utils";
 
@@ -26,6 +27,7 @@ export class Wegbot {
 
     public readonly dev: boolean;
     public discord: Discord.Client = new Discord.Client();
+
     private _commands: CommandMap = Commands.emptyMap();
     private _events: EventsMap = new EventsMap();
 
@@ -33,9 +35,9 @@ export class Wegbot {
         this.dev = options.dev || false;
     }
 
-    public start(): Promise<string> {
-        this.init();
-        return this.login(Wegbot.token);
+    public async start(): Promise<void> {
+        await this.init();
+        await this.login(Wegbot.token);
     }
 
     public addCommand(command: WegbotCommand): void {
@@ -46,7 +48,9 @@ export class Wegbot {
         this._events.add(name, handler);
     }
 
-    private init(): void {
+    private async init(): Promise<void> {
+        await Database.init();
+
         this.discord.on("ready", Uptime.ready);
         this.discord.on("message", this.onMessage.bind(this));
         this.discord.on("messageReactionAdd", this.onMessageReactionAdd.bind(this));
