@@ -16,6 +16,7 @@ export interface WegbotCommandProps {
     description?: string;   // command description
     hide?: boolean;         // hide from help command
     ownerOnly?: boolean;    // restrict access to owner only
+    elevatedOnly?: boolean; // restrict access to elevated users only
 }
 
 export abstract class WegbotCommand<T extends WegbotCommandProps = WegbotCommandProps> {
