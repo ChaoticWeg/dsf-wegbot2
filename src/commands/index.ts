@@ -14,5 +14,6 @@ export {
     PingCommand,
     AddRoleCommand, RemoveRoleCommand,
     HelpCommand, UptimeCommand,
-    EchoCommands
+    EchoCommands,
+    LookupCommand
 } from "./impl";

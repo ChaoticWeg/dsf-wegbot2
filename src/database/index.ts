@@ -24,7 +24,7 @@ export async function init(): Promise<void> {
     mongoose.connection.on("error", console.error.bind(console, "db connection error:"));
 
     const config = new DatabaseConfig();
-    await mongoose.connect(config.connectString);
+    await mongoose.connect(config.connectString, { useNewUrlParser: true });
 }
 
 export async function findUserById(userId: string): Promise<any> {
@@ -32,5 +32,5 @@ export async function findUserById(userId: string): Promise<any> {
         await init();
     }
 
-    return await User.find().where("userId").equals(userId).exec();
+    return await User.findOne({ userId }).exec();
 }
