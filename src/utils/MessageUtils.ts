@@ -68,6 +68,19 @@ export namespace MessageUtils {
         return;
     }
 
+    const BRO_TIMEOUT_MS = 15000;
+    let LAST_BRO = 0;
+    export async function bro(message: Message): Promise<void> {
+        if (message.cleanContent === "BRO") {
+            if (Date.now() - LAST_BRO >= BRO_TIMEOUT_MS) {
+                LAST_BRO = Date.now();
+                await message.channel.send("BRO");
+            } else {
+                await react(message, "ping");
+            }
+        }
+    }
+
     export async function react(message: Message, emojiName: string): Promise<void> {
         const pingsock = EmojiUtils.getEmojiByName(message.guild, emojiName);
         if (!pingsock) {
