@@ -5,7 +5,8 @@ import { MessageEventHandler } from "../index";
 class MessageEvents implements IEventsNamespace {
     public asList(): MessageEventHandler[] {
         return [
-            MessageUtils.logMessageAsync
+            MessageUtils.logMessageAsync,
+            MessageUtils.bro
         ];
     }
 }

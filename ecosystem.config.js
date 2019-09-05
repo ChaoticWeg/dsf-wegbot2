@@ -10,7 +10,7 @@ module.exports = {
     max_memory_restart: '1G',
     env: {
       NODE_ENV: 'production',
-      PIN_THRESHOLD: '2',
+      PIN_THRESHOLD: '3',
       COMMAND_PREFIX: '?'
     }
   }]
